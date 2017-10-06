@@ -8,20 +8,30 @@ function(Scene,Ball,Paddle,Brick) {
             this.ball = new Ball(context);
             this.paddle = new Paddle(context);
 
-            this.registerAction("a",function(){
+            this.registerAction("a",()=>{
                 this.paddle.moveLeft();
-            }.bind(this))
-            this.registerAction("d",function(){
+            })
+            this.registerAction("d",()=>{
                 this.paddle.moveRight();
-            }.bind(this))
+            })
+            this.registerAction("w",()=>{
+                this.paddle.moveTop();
+            })
+            this.registerAction("s",()=>{
+                this.paddle.moveBottom();
+            })
+          
         }
         draw(){
             super.draw();
-            //开始绘制
-           this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)
-           this.ball.move();
-           this.ball.draw();
+            if(this.ball.collide(this.paddle)){
+                // this.ball.reverse()
+                this.triggerEvent("gameover");
+            }
+            this.ball.move();
 
+            //开始绘制
+           this.ball.draw();
            this.paddle.draw();
         }
        

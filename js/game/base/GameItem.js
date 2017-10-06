@@ -8,35 +8,25 @@ define(function() {
             this.x = 0;
             this.y = 0;
             this.image = new Image();
+            this.imageCache = {};
         }
-         loadImage(path){
-           this.image.src = path;
-           return new Promise((resolve,reject)=>{
-            this.image.onload = ()=>{
-                resolve(this.image);
-            }
-           })
+         loadImage(name){
+           this.image = this.context.imageCache[name];
         }
-        static getPoint(item){
+        static getRect(item){
             return [
                 {x:item.x,y:item.y},
-                {x:item.x + x.image.width,y:item.y},
-                {x:item.x,y:item.y + item.image.width},
-                {x:item.x + x.image.width,y:item.y + item.image.width},
+                {x:item.x + item.image.width,y:item.y},
+                {x:item.x,y:item.y + item.image.height},
+                {x:item.x + item.image.width,y:item.y + item.image.height},
             ]
         }
-        static collide(a,b){
-            GameItem.getPoint(a)
-            .some(aPoint=>{
-                var bPoint = GameItem.getPoint(b)
-
-                return aPoint.x >= bPoint[0].x && aPoint.x <= bPoint[3].x
-                && aPoint.y >= bPoint[0].y && aPoint.y <= bPoint[3].y
-            })
-           
-        }
-        collide(item){
-           return GameItem.collide(this,item) || GameItem.collide(item,this) 
+        collide(item){ //碰撞检测 Axis-Aligned Bounding Box
+            var a = GameItem.getRect(this)
+            var b = GameItem.getRect(item)
+            
+            return a[0].x < b[3].x && a[3].x > b[0].x
+            && a[0].y < b[3].y && a[3].y > b[0].y
         }
         draw(){
             this.context.canvasContext.drawImage(this.image,this.x,this.y);

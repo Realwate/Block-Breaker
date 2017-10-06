@@ -4,7 +4,7 @@ define(["base/GameItem"],function(GameItem) {
     class Ball extends GameItem{
         constructor(context){
             super(context);
-            this.loadImage('./img/ball.PNG')
+            this.loadImage('ball')
             this.speedX = this.step;
             this.speedY = this.step;
         }
@@ -15,15 +15,20 @@ define(["base/GameItem"],function(GameItem) {
             }
             if(this.y + this.speedY > this.context.height
                 || this.y < 0 ){ 
-                this.reverseX();
+                this.reverseY();
             }
             this.x +=  this.speedX
             this.y +=  this.speedY
         }
+        //碰撞后变化方向
+        reverse(paddle){
+            this.reverseX();
+            this.reverseY();
+        }
         reverseX(){
             this.speedX *=-1;
         }
-        reverseX(){
+        reverseY(){
             this.speedY *=-1;
         }
     }
