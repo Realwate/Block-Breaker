@@ -1,4 +1,4 @@
-define(["base/GameItem"],function(GameItem) {
+define(["base/GameItem","util"],function(GameItem,util) {
     'use strict';
     
     class Scene{
@@ -7,6 +7,7 @@ define(["base/GameItem"],function(GameItem) {
             this.actions = {};
             this.keydowns = {};
             this.events = {};
+            this.elements = [];
             window.addEventListener("keydown",(e)=>{
                 this.keydowns[e.key] = true;
             })
@@ -14,8 +15,8 @@ define(["base/GameItem"],function(GameItem) {
                 this.keydowns[e.key] = false;
             })
         }
-        static init(context){
-            return new this(context);
+        replaceScene(scene){
+            this.context.game.replaceScene(scene);
         }
         registerAction(name,callback){
             this.actions[name] = callback;
@@ -27,23 +28,36 @@ define(["base/GameItem"],function(GameItem) {
             var cb = this.events[name] ;
             cb && cb();
         }
+        addElement(e){
+            this.elements.push(e);
+        }
         draw(){
-            //遍历action 更改状态
-            Object.keys(this.actions)
-            .forEach((key)=>{
-                if(this.keydowns[key]){
-                    this.actions[key]();
+            this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)
+
+            this.update(); 
+            this.elements.forEach(e=>{
+                if(util.isArray(e)){
+                   for(let o of e){
+                        o.draw();
+                   }
+                }else{
+                    e.draw(); 
                 }
-            })
-            this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)      
+            });
+           
+        }
+        update(){
+             //遍历action 更改状态
+             Object.keys(this.actions)
+             .forEach((key)=>{
+                 if(this.keydowns[key]){
+                     this.actions[key]();
+                 }
+             })
         }
         destroy(){
-            this.actions = {};
-            this.keydowns = {};
-            this.events = {};
+        
         }
-       
     }
-
     return Scene;
 });

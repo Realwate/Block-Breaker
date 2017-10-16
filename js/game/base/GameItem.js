@@ -8,17 +8,18 @@ define(function() {
             this.x = 0;
             this.y = 0;
             this.image = new Image();
-            this.imageCache = {};
         }
          loadImage(name){
            this.image = this.context.imageCache[name];
+           this.width = this.image.width;
+           this.height = this.image.height;
         }
         static getRect(item){
             return [
                 {x:item.x,y:item.y},
-                {x:item.x + item.image.width,y:item.y},
-                {x:item.x,y:item.y + item.image.height},
-                {x:item.x + item.image.width,y:item.y + item.image.height},
+                {x:item.x + item.width,y:item.y},
+                {x:item.x,y:item.y + item.height},
+                {x:item.x + item.width,y:item.y + item.height},
             ]
         }
         collide(item){ //碰撞检测 Axis-Aligned Bounding Box

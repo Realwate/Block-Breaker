@@ -1,10 +1,17 @@
-define(["base/Scene"],function(Scene) {
+define(["base/Scene","SceneMain"],
+function(Scene,SceneMain) {
     'use strict';
     
     class SceneStart extends Scene{
         constructor(context){
             super(context);
-           
+            this.setup()
+        }
+        setup(){
+            this.registerAction("k", () => {
+                var main = new SceneMain(this.context);
+                this.replaceScene(main);
+            })
         }
         draw(){
             super.draw();

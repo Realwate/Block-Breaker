@@ -5,9 +5,12 @@ define(["base/GameItem"],function(GameItem) {
         constructor(context){
             super(context);
             this.loadImage('paddle');
-            this.x = context.width / 2 - this.image.width / 2;
-            this.y = context.height - this.image.height * 3;
-           
+            this.setup();
+        }
+        setup(){
+            this.x =   this.context.width / 2 - this.width / 2;
+            this.y =  this.context.height - this.height * 3;
+            this.step = this.step * 2;
         }
         moveLeft(){
             if(this.x < this.step){

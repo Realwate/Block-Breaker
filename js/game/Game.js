@@ -2,8 +2,8 @@
 /**
  * Game负责整个游戏的初始化，场景切换。
  */
-define(["SceneStart", "SceneMain", "SceneEnd","util"],
-    function (SceneStart, SceneMain, SceneEnd,util) {
+define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
+    function (SceneStart, SceneMain, SceneEnd,util,config) {
         'use strict';
 
         class Game {
@@ -11,6 +11,7 @@ define(["SceneStart", "SceneMain", "SceneEnd","util"],
                 this.canvas = canvas;
                 this.imageCache = {};
                 this.context = {
+                    game:this,
                     width: canvas.width,
                     height: canvas.height,
                     canvasContext: canvas.getContext("2d"),
@@ -18,20 +19,6 @@ define(["SceneStart", "SceneMain", "SceneEnd","util"],
                 };
                 this.context.canvasContext.font="18px yahei";
                 this.scene = new SceneStart(this.context);
-                this.scene.registerAction("k", () => {
-                    createMain();
-                })
-                var createMain = () => {
-                    var main = new SceneMain(this.context);
-                    main.registerEvent("gameover", () => {
-                        var end = new SceneEnd(this.context);
-                        end.registerAction("r", () => {
-                            createMain();
-                        })
-                        this.replaceScene(end);
-                    })
-                    this.replaceScene(main);
-                }
             }
             start() {
                 this.context.canvasContext.fillText("加载资源中...",50,100);
@@ -40,14 +27,15 @@ define(["SceneStart", "SceneMain", "SceneEnd","util"],
                     window.requestAnimationFrame(draw);
                     // setTimeout(draw,1000/60)
                 }
-                //预加载鱼片
-                var imageNames = ["ball","paddle"]
-                Promise.all(imageNames.map(name=>{
-                    return util.loadImage(name)
-                    .then(image=>{
-                        this.imageCache[name] = image;
+                //预加载图片
+                var images = config.images;
+                util.loadImage(images)
+                .then(imageInfos=>{
+                    imageInfos.forEach((imageInfo)=>{
+                        this.imageCache[imageInfo.fullName] = imageInfo.image;
                     })
-                }))
+                   
+                })
                 .then(draw)
 
             }
