@@ -5,29 +5,30 @@ define(["base/GameItem"],function(GameItem) {
         constructor(context){
             super(context);
             this.loadImage('ball');
-            this.width = 25;
-            this.height = 25;
+            this.width = 24;
+            this.height = 24;
             this.setup();
         }
         setup(){
             this.speedX = this.step;
             this.speedY = this.step;
         }
-        move(){
-          if(this.x + this.width > this.context.width
-            || this.x < 0 ){
-              this.reverseX()
-            }
-            if(this.y + this.height > this.context.height
-              || this.y < 0 ){
-                this.reverseY()
-              }
-            this.normalizeXY()
-            this.x +=  this.speedX
-            this.y +=  this.speedY
+        move() {
+          if (this.y + this.height >= this.context.height) {
+            this.triggerEvent("bottomOut");
+          }
+          if (this.x + this.width > this.context.width
+            || this.x < 0) {
+            this.reverseX()
+          }
+          if (this.y + this.height > this.context.height
+            || this.y < 0) {
+            this.reverseY()
+          }
+          this.x += this.speedX
+          this.y += this.speedY
         }
-        //碰撞后要将球分开，求出最小位移 不能仅改变方向
-        reverse(gameItem){
+        separateFrom(gameItem){
           var intersectRect = this.getIntersect(gameItem);
           if(intersectRect == null){
             return;
@@ -41,13 +42,13 @@ define(["base/GameItem"],function(GameItem) {
           }else if(direction < 0){ //水平移动
             this.reverseX();
             this.x += this.getSpeedXDir() * minDistance;
-          }else{
+          }else{ //同时移动
             this.reverseX();
             this.reverseY();
             this.x += this.getSpeedXDir() * minDistance;
             this.y += this.getSpeedYDir() * minDistance;
           }
-
+          // x,y不能超出边界
           this.normalizeXY();
         }
         getSpeedXDir(x){

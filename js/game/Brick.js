@@ -2,16 +2,15 @@ define(["base/GameItem","util"],function(GameItem,util) {
     'use strict';
 
     class Brick extends GameItem{
-        constructor(context,x,y) {
+        constructor(context,initConfig) {
             super(context);
-            if(x != null){
-                this.x = x;
-                this.y = y || 0;
-            }
-            this.setup();
+           
+            this.setup(initConfig);
         }
-        setup(){
-            this.health = util.getRandom(1,3);
+        setup({x=0,y=0,health=1}){
+            this.x = x;
+            this.y = y;
+            this.health = health;
             this.loadImage(Brick.getImageNameByHealth(this.health));
         }
         static getImageNameByHealth(health){
@@ -19,16 +18,25 @@ define(["base/GameItem","util"],function(GameItem,util) {
         }
         static init(context,x,y,count){
             var bricks = [];
-            // while(count > 0){
-            //     var currentCount = util.getRandom(1,count + 1);
-            //     count -= currentCount;
-            //     while(currentCount-- > 0){
-            //         var brick = new Brick();
-            //         bricks.push(brick);
-            //     }
-            // }
-            for(var i=30;i<180;i+=30){
-                bricks.push(new Brick(context,i*3,i*2));
+            var eachWidth = 50;
+            var maxCount = Math.floor((context.width - eachWidth) / eachWidth);
+            var minCount = 2;
+            var currentCount = 0;
+
+            for (var i = 40; count > 0; i += 30) {
+                if(count == minCount){
+                    currentCount == minCount;
+                    count = 0;
+                }else{
+                    currentCount = Math.min(util.getRandom(1, Math.round(maxCount/2)),count);
+                    count -= currentCount;
+                }
+              
+               var averageWidth = Math.floor((context.width - eachWidth) / currentCount);
+                for (var j = 0; j < currentCount; j++) {
+                    var brick = new Brick(context,{x:j * averageWidth + eachWidth,y:i});
+                    bricks.push(brick);
+                }
             }
             return bricks;
         }

@@ -1,8 +1,9 @@
-define(function() {
+define(["base/EventTarget"],function(EventTarget) {
     'use strict';
 
-    class GameItem {
+    class GameItem extends EventTarget{
         constructor(context){
+            super();
             this.context = context;
             this.step = 3;
             this.x = 0;
@@ -50,7 +51,7 @@ define(function() {
         draw(){
             this.context.canvasContext.drawImage(this.image,this.x,this.y,this.width,this.height);
         }
-        flipHorizontalDraw(){
+        flipHorizontalDraw(){ // 水平翻转
           this.context.canvasContext.save();
           this.context.canvasContext.translate(this.x + this.width,0)
           this.context.canvasContext.scale(-1,1);

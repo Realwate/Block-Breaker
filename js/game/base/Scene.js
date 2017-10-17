@@ -1,12 +1,12 @@
-define(["base/GameItem","util"],function(GameItem,util) {
+define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget,util) {
     'use strict';
 
-    class Scene{
+    class Scene extends EventTarget{
         constructor(context){
+            super();
             this.context = context;
             this.actions = {};
             this.keydowns = {};
-            this.events = {};
             this.elements = [];
             window.addEventListener("keydown",(e)=>{
                 this.keydowns[e.key] = true;
@@ -20,13 +20,6 @@ define(["base/GameItem","util"],function(GameItem,util) {
         }
         registerAction(name,callback){
             this.actions[name] = callback;
-        }
-        registerEvent(name,callback){
-            this.events[name] = callback;
-        }
-        triggerEvent(name){
-            var cb = this.events[name] ;
-            cb && cb();
         }
         addElement(e){
             this.elements.push(e);
