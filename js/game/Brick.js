@@ -4,15 +4,15 @@ define(["base/GameItem","util"],function(GameItem,util) {
     class Brick extends GameItem{
         constructor(context,x,y) {
             super(context);
-            if(x!=null){
+            if(x != null){
                 this.x = x;
-                this.y = y;
+                this.y = y || 0;
             }
             this.setup();
         }
         setup(){
-            this.health = 2//util.getRandom(1,3);
-            this.loadImage(Brick.getImageNameByHealth(this.health));   
+            this.health = util.getRandom(1,3);
+            this.loadImage(Brick.getImageNameByHealth(this.health));
         }
         static getImageNameByHealth(health){
             return `bricks/brick${health}`
@@ -27,8 +27,8 @@ define(["base/GameItem","util"],function(GameItem,util) {
             //         bricks.push(brick);
             //     }
             // }
-            for(var i=0;i<120;i+=30){
-                bricks.push(new Brick(context,i*3,i));
+            for(var i=30;i<180;i+=30){
+                bricks.push(new Brick(context,i*3,i*2));
             }
             return bricks;
         }
@@ -37,7 +37,7 @@ define(["base/GameItem","util"],function(GameItem,util) {
         }
         kill(){
             this.health--;
-            this.health > 0 && this.loadImage(Brick.getImageNameByHealth(this.health));   
+            this.health > 0 && this.loadImage(Brick.getImageNameByHealth(this.health));
         }
     }
 

@@ -1,15 +1,16 @@
 define(["base/GameItem"],function(GameItem) {
     'use strict';
-    
+
     class Paddle extends GameItem{
         constructor(context){
             super(context);
             this.loadImage('paddle');
+            this.width = 200;
             this.setup();
         }
         setup(){
             this.x =   this.context.width / 2 - this.width / 2;
-            this.y =  this.context.height - this.height * 3;
+            this.y =  this.context.height - this.height * 4;
             this.step = this.step * 2;
         }
         moveLeft(){
@@ -19,18 +20,26 @@ define(["base/GameItem"],function(GameItem) {
             }
             this.x -= this.step;
         }
-        moveTop(){     
-            this.y -= this.step;
-        }
-        moveBottom(){
-            this.y += this.step;
-        }
         moveRight(){
             if(this.x + this.step + this.image.width > this.context.width){
                 this.x = this.context.width - this.image.width
                 return;
             }
             this.x += this.step;
+        }
+        moveTop(){
+          if(this.y < this.step){
+              this.y = 0;
+              return;
+          }
+            this.y -= this.step;
+        }
+        moveBottom(){
+          if(this.y + this.step + this.image.height > this.context.height){
+              this.y = this.context.height - this.image.height
+              return;
+          }
+            this.y += this.step;
         }
     }
 

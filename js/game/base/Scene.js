@@ -1,6 +1,6 @@
 define(["base/GameItem","util"],function(GameItem,util) {
     'use strict';
-    
+
     class Scene{
         constructor(context){
             this.context = context;
@@ -32,19 +32,17 @@ define(["base/GameItem","util"],function(GameItem,util) {
             this.elements.push(e);
         }
         draw(){
+          this.update(); 
             this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)
-
-            this.update(); 
             this.elements.forEach(e=>{
                 if(util.isArray(e)){
                    for(let o of e){
                         o.draw();
                    }
                 }else{
-                    e.draw(); 
+                    e.draw();
                 }
             });
-           
         }
         update(){
              //遍历action 更改状态
@@ -56,7 +54,7 @@ define(["base/GameItem","util"],function(GameItem,util) {
              })
         }
         destroy(){
-        
+
         }
     }
     return Scene;

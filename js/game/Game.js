@@ -25,7 +25,7 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                 var draw = ()=>{
                     this.scene.draw();
                     window.requestAnimationFrame(draw);
-                    // setTimeout(draw,1000/60)
+                    // setTimeout(draw,1000/20)
                 }
                 //预加载图片
                 var images = config.images;
@@ -34,10 +34,8 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                     imageInfos.forEach((imageInfo)=>{
                         this.imageCache[imageInfo.fullName] = imageInfo.image;
                     })
-                   
                 })
                 .then(draw)
-
             }
             replaceScene(scene) {
                 this.scene.destroy();
