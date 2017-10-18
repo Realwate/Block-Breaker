@@ -1,4 +1,4 @@
-define(["base/EventTarget"],function(EventTarget) {
+define(["base/EventTarget","util"],function(EventTarget,util) {
     'use strict';
 
     class GameItem extends EventTarget{
@@ -6,6 +6,7 @@ define(["base/EventTarget"],function(EventTarget) {
             super();
             this.context = context;
             this.step = 3;
+            this.logger = util.getLogger();
             this.x = 0;
             this.y = 0;
             this.image = new Image();

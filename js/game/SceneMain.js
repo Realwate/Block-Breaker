@@ -1,50 +1,66 @@
-define(["base/Scene",'Ball','Paddle','Brick','SceneEnd','SceneOver','config'],
-function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,config) {
+define(["base/Scene",'Ball','Paddle','Brick','SceneEnd','SceneOver','Background','Score','util','config'],
+function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config) {
     'use strict';
 
     class SceneMain extends Scene{
-        constructor(context){
+        constructor(context,initConfig={}){
             super(context);
-            this.init();
-            this.setup();
+            this.setup(initConfig);
         }
-        init(){
-          this.ball = new Ball(this.context);
-          this.ball.registerEvent("bottomOut",()=>{
-              var end = new SceneEnd(this.context);
-              this.replaceScene(end);
-          })
-          this.addElement(this.ball);
-          this.paddle = new Paddle(this.context);
-          this.addElement(this.paddle);
+        setup({level=1}) {
+            this.level = level;
+            this.maxLevel = config.bricks.length;
+            this.registerEvent("gameend", () => {
+                var end = new SceneEnd(this.context);
+                this.replaceScene(end);
+            })
 
-          this.bricks = Brick.loadBricks(this.context,this.level)
-          this.addElement(this.bricks);
+            this.background = new Background(this.context);
+            this.background.width = config.global.width;
+            this.background.height = config.global.height;
+            this.addElement(this.background);
+            this.score = new Score(this.context);
+            this.addElement(this.score);
+
+            this.ball = new Ball(this.context);
+            this.ball.registerEvent("bottomOut", () => {
+               this.triggerEvent("gameover");
+            })
+            this.addElement(this.ball);
+            this.paddle = new Paddle(this.context);
+            this.addElement(this.paddle);
+
+            this.bricks = this.loadBricks(this.context, this.level)
+           
+            this.addElement(this.bricks);
+            this.registerAction("a", () => {
+                this.paddle.moveLeft();
+            })
+            this.registerAction("d", () => {
+                this.paddle.moveRight();
+            })
+            this.registerAction("w", () => {
+                this.paddle.moveTop();
+            })
+            this.registerAction("s", () => {
+                this.paddle.moveBottom();
+            })
+            this.registerAction("r", () => {
+               this.triggerEvent("gameover")
+            })
+            this.registerEvent("gameover", () => {
+                var end = new SceneOver(this.context);
+                this.replaceScene(end);
+            })
         }
-        setup(){
-          this.level = 1;
-          this.maxLevel = config.bricks.length;
-          this.registerAction("a",()=>{
-            this.paddle.moveLeft();
-          })
-          this.registerAction("d",()=>{
-            this.paddle.moveRight();
-          })
-          this.registerAction("w",()=>{
-            this.paddle.moveTop();
-          })
-          this.registerAction("s",()=>{
-            this.paddle.moveBottom();
-          })
-          this.registerEvent("gameend",()=>{
-            var end = new SceneEnd(this.context);
-            this.replaceScene(end);
-          })
-          this.registerAction("gameover",()=>{
-            var end = new SceneOver(this.context);
-            this.replaceScene(end);
-          })
-        }
+        toNextLevel(){
+            if(++this.level > this.maxLevel){
+                this.triggerEvent("gameend")
+                return;
+            }
+            var main = new SceneMain(this.context,{level:this.level});
+            this.replaceScene(main)
+          }
         collideDetect(){
             // 碰撞检测并分离
           if(this.ball.collide(this.paddle)){
@@ -61,13 +77,35 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,config) {
               }
           });
         }
-        toNextLevel(){
-          this.level++;
-          if(this.level > this.maxLevel){
-              this.trigerEvent("gameend")
-              return;
-          }
-         this.init();
+        loadBricks(context, level) {
+            var bricks = [];
+            var bricksConfig = config.bricks[level - 1];
+            var getPosition = util.getRandomPosition({ width: 300, height:180, startX: 50, startY: 50 });
+            if (util.isNumber(bricksConfig)) {
+                var count = bricksConfig;
+                while (count-- > 0) {
+                    var position = getPosition();
+                    this.logger.log("生成位置:",position);
+                    bricks.push(new Brick(context, position))
+
+                }
+            } else {
+                var totalCount = bricksConfig.totalCount || 0;
+                bricksConfig.settings.forEach(({ count, health }) => {
+                    while (count-- > 0) {
+                        var position = getPosition();
+                        bricks.push(new Brick(context, Object.assign({ health }, position)))
+                    }
+                })
+                var resetCount = totalCount - bricks.length;
+                if(resetCount > 0){
+                    while(resetCount-- > 0){
+                        var position = getPosition();
+                        bricks.push(new Brick(context, position));
+                    }
+                }
+            }
+            return bricks;
         }
         draw(){
           // 检测其他元素是否碰撞到ball

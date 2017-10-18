@@ -8,6 +8,8 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
 
         class Game {
             constructor(canvas) {
+                canvas.height = config.global.height;
+                canvas.width = config.global.width;
                 this.canvas = canvas;
                 this.imageCache = {};
                 this.context = {
@@ -37,6 +39,7 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                 })
                 .then(draw)
             }
+           
             replaceScene(scene) {
                 this.scene.destroy();
                 this.scene = scene;

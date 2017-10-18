@@ -11,7 +11,7 @@ define(["base/GameItem"],function(GameItem) {
         }
         setup(){
             this.x =   this.context.width / 2 - this.width / 2;
-            this.y =  this.context.height - this.height * 2;
+            this.y =  this.context.height - this.height;
             this.step = this.step * 2;
         }
         moveLeft(){

@@ -5,7 +5,10 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
         constructor(context){
             super();
             this.context = context;
-            this.init();
+            this.actions = {};
+            this.keydowns = {};
+            this.elements = [];
+            this.logger = util.getLogger();
             window.addEventListener("keydown",(e)=>{
                 this.keydowns[e.key] = true;
             })

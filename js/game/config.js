@@ -2,26 +2,37 @@ define(function() {
     'use strict';
 
     return {
+      global:{
+        width:460,
+        height:320,
+      },
       images:[
         "ball",
         "paddle",
         {
           prefix:"bricks",
           names:[
-            "brick1","brick2"
+            "brick1","brick2","brick3","brick4"
+          ]
+        },
+        {
+          prefix:"background",
+          names:[
+            "background1",
           ]
         }
     ],
     bricks:[
-      5,{
-        totalCount:8,
+      6,/*{
+        totalCount:9,
         settings:[
           {
             health:2,
             count:3
           }
         ]
-      },{
+      },
+      {
         totalCount:12,
         settings:[
           {
@@ -33,7 +44,7 @@ define(function() {
             count:2
           }
         ]
-      }
+      }*/
     ]
     }
 

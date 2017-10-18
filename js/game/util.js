@@ -13,7 +13,7 @@ define(function () {
 
     util.getImageFullPath = function(path){
         path = /\./.test(path) ? path : path + ".jpg";
-         return `./img/${path}`;
+         return `./assets/img/${path}`;
     }
     util.loadOneImage = function(fullName){
         var fullePath = util.getImageFullPath(fullName);
@@ -49,6 +49,43 @@ define(function () {
      util.getUUID = function(min, max){
         return guid++;
      }
+     util.getRandomPosition = function({width:containerWidth,height:containerHeight,startX,startY}){
+        var eachWidth = 50,
+        eachHeight = 30;
+        var rowCount = Math.floor(containerWidth / eachWidth)
+        var colCount = Math.floor(containerHeight / eachHeight)
+        var totalCount = rowCount * colCount;
+        var flagMap = {};
+        for (var i = 0; i < totalCount; i++) {
+            flagMap[i] = true;
+        }
+
+        return function(){
+            var x = startX,y = startY;
+           var restSeats = Object.keys(flagMap)
+            .filter(index=>flagMap[index]);
+            if(restSeats.length == 0){
+                return {x,y}
+            }
+            //从剩余的位置中随机一个
+            var randomIndex = util.getRandom(0,restSeats.length);
+            var num = restSeats[randomIndex]
+            flagMap[num] = false;
+
+            var row = Math.floor(num / rowCount)
+            var col = num % colCount;
+            y += row * eachHeight;
+            x += col * eachWidth;
+            return {
+                x,y
+            }
+        }
+    }
+    util.getLogger = function(){
+        return {
+            log: console.log.bind(console)
+        }
+    }
 
     return util;
 });
