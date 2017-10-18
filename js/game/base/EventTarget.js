@@ -1,23 +1,33 @@
-define(function(util) {
+define(["util"],function(util) {
     'use strict';
 
     class EventTarget{
         constructor(){
-            this.events = {};
+            this.eventListeners = {};
         }
         registerEvent(name,callback){
-            if(this.events[name] == null){
-                this.events[name] = [];
+            if(this.eventListeners[name] == null){
+                this.eventListeners[name] = {};
             }
-            this.events[name].push(callback);
+            callback.__uuid = util.getUUID();
+            this.eventListeners[name][callback.__uuid] = callback;
         }
         triggerEvent(name,args){
-            var target = this.events[name];
+            var target = this.eventListeners[name];
             if(target != null){
-                for(let cb of target){
-                    cb.call(this,args);
-                }
+              Object.keys(target).forEach((key)=>{
+                var cb = target[key];
+                cb &&　cb.call(this,args);
+              })
             }
+        }
+        removeEventListener(name,cb){
+          if(cb){
+            var uuid = cb.__uuid;
+            this.eventListeners[name][uuid] = null;
+          }else{
+            this.eventListeners[name] = null;
+          }
         }
     }
     return EventTarget;

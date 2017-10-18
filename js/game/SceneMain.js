@@ -1,41 +1,49 @@
-define(["base/Scene",'Ball','Paddle','Brick','SceneEnd'],
-function(Scene,Ball,Paddle,Brick,SceneEnd) {
+define(["base/Scene",'Ball','Paddle','Brick','SceneEnd','SceneOver','config'],
+function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,config) {
     'use strict';
 
     class SceneMain extends Scene{
         constructor(context){
             super(context);
+            this.init();
             this.setup();
         }
-        setup(){
-            this.ball = new Ball(this.context);
-            this.ball.registerEvent("bottomOut",()=>{
-                var end = new SceneEnd(this.context);
-                this.replaceScene(end);
-            })
-            this.addElement(this.ball);
-            this.paddle = new Paddle(this.context);
-            this.addElement(this.paddle);
+        init(){
+          this.ball = new Ball(this.context);
+          this.ball.registerEvent("bottomOut",()=>{
+              var end = new SceneEnd(this.context);
+              this.replaceScene(end);
+          })
+          this.addElement(this.ball);
+          this.paddle = new Paddle(this.context);
+          this.addElement(this.paddle);
 
-            this.bricks = Brick.init(this.context,0,0,6)
-            this.addElement(this.bricks);
-            //
-            this.registerAction("a",()=>{
-                this.paddle.moveLeft();
-            })
-            this.registerAction("d",()=>{
-                this.paddle.moveRight();
-            })
-            this.registerAction("w",()=>{
-                this.paddle.moveTop();
-            })
-            this.registerAction("s",()=>{
-                this.paddle.moveBottom();
-            })
-            this.registerAction("r",()=>{
-                var end = new SceneEnd(this.context);
-                this.replaceScene(end);
-            })
+          this.bricks = Brick.loadBricks(this.context,this.level)
+          this.addElement(this.bricks);
+        }
+        setup(){
+          this.level = 1;
+          this.maxLevel = config.bricks.length;
+          this.registerAction("a",()=>{
+            this.paddle.moveLeft();
+          })
+          this.registerAction("d",()=>{
+            this.paddle.moveRight();
+          })
+          this.registerAction("w",()=>{
+            this.paddle.moveTop();
+          })
+          this.registerAction("s",()=>{
+            this.paddle.moveBottom();
+          })
+          this.registerEvent("gameend",()=>{
+            var end = new SceneEnd(this.context);
+            this.replaceScene(end);
+          })
+          this.registerAction("gameover",()=>{
+            var end = new SceneOver(this.context);
+            this.replaceScene(end);
+          })
         }
         collideDetect(){
             // 碰撞检测并分离
@@ -53,6 +61,14 @@ function(Scene,Ball,Paddle,Brick,SceneEnd) {
               }
           });
         }
+        toNextLevel(){
+          this.level++;
+          if(this.level > this.maxLevel){
+              this.trigerEvent("gameend")
+              return;
+          }
+         this.init();
+        }
         draw(){
           // 检测其他元素是否碰撞到ball
           this.collideDetect();
@@ -63,6 +79,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd) {
           super.draw();
           if(this.bricks.length == 0){
             // TODO 进入下一关
+            this.toNextLevel();
           }
         }
     }

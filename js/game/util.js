@@ -1,10 +1,10 @@
 define(function () {
     var util = {};
-
+    var guid = 1;
     var __toString = function(o){
         return Object.prototype.toString.call(o);
     }
-    "Function,Array,Object".split(",")
+    "Function,Array,Object,Number".split(",")
     .forEach(function(type){
         util["is" + type] = function(o){
             return __toString(o) == `[object ${type}]`
@@ -30,10 +30,10 @@ define(function () {
         imageConfig.map((obj)=>{
             if(util.isObject(obj)){
                 obj.names.map((name)=>{
-                    var fullName = `${obj.prefix}/${name}`  
+                    var fullName = `${obj.prefix}/${name}`
                     imageNames.push(fullName);
                 });
-    
+
             }else{
                 imageNames.push(obj);
             }
@@ -45,6 +45,9 @@ define(function () {
      }
      util.getRandom = function(min, max){
         return Math.floor(Math.random() * (max - min) + min);
+     }
+     util.getUUID = function(min, max){
+        return guid++;
      }
 
     return util;

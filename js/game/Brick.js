@@ -1,10 +1,9 @@
-define(["base/GameItem","util"],function(GameItem,util) {
+define(["base/GameItem","util","config"],function(GameItem,util,config) {
     'use strict';
 
     class Brick extends GameItem{
         constructor(context,initConfig) {
             super(context);
-           
             this.setup(initConfig);
         }
         setup({x=0,y=0,health=1}){
@@ -13,35 +12,42 @@ define(["base/GameItem","util"],function(GameItem,util) {
             this.health = health;
             this.loadImage(Brick.getImageNameByHealth(this.health));
         }
+        setPosition({x=0,y=0}){
+          this.x = x;
+          this.y = y;
+        }
         static getImageNameByHealth(health){
             return `bricks/brick${health}`
         }
-        static init(context,x,y,count){
-            var bricks = [];
-            var eachWidth = 50;
+        static setPositionRandom(bricks){
+            var totalCount = bricks.length;
+            var eachWidth = 50,eachHeight = 30;
             var maxCount = Math.floor((context.width - eachWidth) / eachWidth);
             var minCount = 2;
             var currentCount = 0;
-
-            for (var i = 40; count > 0; i += 30) {
-                if(count == minCount){
-                    currentCount == minCount;
-                    count = 0;
-                }else{
-                    currentCount = Math.min(util.getRandom(1, Math.round(maxCount/2)),count);
-                    count -= currentCount;
-                }
-              
-               var averageWidth = Math.floor((context.width - eachWidth) / currentCount);
-                for (var j = 0; j < currentCount; j++) {
-                    var brick = new Brick(context,{x:j * averageWidth + eachWidth,y:i});
-                    bricks.push(brick);
-                }
-            }
+        
             return bricks;
         }
+        static loadBricks(context,level){
+          var bricks = [];
+          var bricksConfig = config.bricks[level - 1];
+          if(util.isNumber(bricksConfig)){
+            var count = bricksConfig;
+            while(count-- >0){
+              bricks.push(new Brick())
+            }
+          }else{
+            var totalCount = bricksConfig.totalCount || 0;
+            bricksConfig.settings.forEach(({count,health})=>{
+              while(count-- > 0){
+                bricks.push(new Brick({health}))
+              }
+            })
+          }
+          return Brick.setPositionRandom(bricks);
+        }
         isAlive(){
-            return  this.health > 0;
+            return this.health > 0;
         }
         kill(){
             this.health--;

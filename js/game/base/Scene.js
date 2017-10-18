@@ -5,15 +5,18 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
         constructor(context){
             super();
             this.context = context;
-            this.actions = {};
-            this.keydowns = {};
-            this.elements = [];
+            this.init();
             window.addEventListener("keydown",(e)=>{
                 this.keydowns[e.key] = true;
             })
             window.addEventListener("keyup",(e)=>{
                 this.keydowns[e.key] = false;
             })
+        }
+        init(){
+          this.actions = {};
+          this.keydowns = {};
+          this.elements = [];
         }
         replaceScene(scene){
             this.context.game.replaceScene(scene);
@@ -25,7 +28,7 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
             this.elements.push(e);
         }
         draw(){
-          this.update(); 
+          this.update();
             this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)
             this.elements.forEach(e=>{
                 if(util.isArray(e)){
