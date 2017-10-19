@@ -2,6 +2,9 @@ define(function() {
     'use strict';
 
     return {
+      env:{
+        
+      },
       global:{
         width:460,
         height:320,
@@ -23,8 +26,8 @@ define(function() {
         }
     ],
     bricks:[
-      6,/*{
-        totalCount:9,
+      5,{
+        totalCount:8,
         settings:[
           {
             health:2,
@@ -32,7 +35,7 @@ define(function() {
           }
         ]
       },
-      {
+      /*{
         totalCount:12,
         settings:[
           {

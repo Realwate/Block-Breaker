@@ -7,11 +7,11 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
             super(context);
             this.setup(initConfig);
         }
-        setup({level=1}) {
+        setup({level=1,score=new Score(this.context)}) {
             this.level = level;
             this.maxLevel = config.bricks.length;
-            this.registerEvent("gameend", () => {
-                var end = new SceneEnd(this.context);
+            this.registerEvent("gameend", (args) => {
+                var end = new SceneEnd(this.context,args);
                 this.replaceScene(end);
             })
 
@@ -19,7 +19,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
             this.background.width = config.global.width;
             this.background.height = config.global.height;
             this.addElement(this.background);
-            this.score = new Score(this.context);
+            this.score = score;
             this.addElement(this.score);
 
             this.ball = new Ball(this.context);
@@ -31,7 +31,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
             this.addElement(this.paddle);
 
             this.bricks = this.loadBricks(this.context, this.level)
-           
+
             this.addElement(this.bricks);
             this.registerAction("a", () => {
                 this.paddle.moveLeft();
@@ -55,10 +55,10 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
         }
         toNextLevel(){
             if(++this.level > this.maxLevel){
-                this.triggerEvent("gameend")
+                this.triggerEvent("gameend",this.score.value)
                 return;
             }
-            var main = new SceneMain(this.context,{level:this.level});
+            var main = new SceneMain(this.context,{level:this.level,score:this.score});
             this.replaceScene(main)
           }
         collideDetect(){
@@ -68,6 +68,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
           }
           this.bricks.some((brick,i)=>{
               if(brick.collide(this.ball)){
+                  this.score.increase();
                   brick.kill();
                   if(!brick.isAlive()){
                       this.bricks.splice(i,1);
@@ -116,7 +117,6 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
           // 绘制所有元素
           super.draw();
           if(this.bricks.length == 0){
-            // TODO 进入下一关
             this.toNextLevel();
           }
         }

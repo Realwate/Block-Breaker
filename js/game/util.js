@@ -1,6 +1,5 @@
 define(function () {
     var util = {};
-    var guid = 1;
     var __toString = function(o){
         return Object.prototype.toString.call(o);
     }
@@ -46,9 +45,13 @@ define(function () {
      util.getRandom = function(min, max){
         return Math.floor(Math.random() * (max - min) + min);
      }
-     util.getUUID = function(min, max){
-        return guid++;
+     util.uuidFactory = function(){
+       var guid = 1;
+       return function(min, max){
+          return guid++;
+       }
      }
+     util.getUUID = util.uuidFactory();
      util.getRandomPosition = function({width:containerWidth,height:containerHeight,startX,startY}){
         var eachWidth = 50,
         eachHeight = 30;
