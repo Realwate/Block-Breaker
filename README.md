@@ -7,3 +7,4 @@
 * 动图
 * praticle system
 * debug + log
+* 配置/数据 管理

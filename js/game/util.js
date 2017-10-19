@@ -84,10 +84,10 @@ define(function () {
             }
         }
     }
-    util.getLogger = function(){
-        return {
-            log: console.log.bind(console)
-        }
+
+    var tag = `game${Date.now()}`;
+    util.getTag = function(){
+        return tag;
     }
 
     return util;

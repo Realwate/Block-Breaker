@@ -2,9 +2,7 @@ define(function() {
     'use strict';
 
     return {
-      env:{
-        
-      },
+      env:"dev",
       global:{
         width:460,
         height:320,

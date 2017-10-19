@@ -1,6 +1,6 @@
 define(["util"],function(util) {
     'use strict';
-
+    var tag = util.getTag();
     class EventTarget{
         constructor(){
             this.eventListeners = {};
@@ -9,8 +9,8 @@ define(["util"],function(util) {
             if(this.eventListeners[name] == null){
                 this.eventListeners[name] = {};
             }
-            callback.__uuid = util.getUUID();
-            this.eventListeners[name][callback.__uuid] = callback;
+            callback[tag] = util.getUUID();
+            this.eventListeners[name][callback[tag]] = callback;
         }
         triggerEvent(name,args){
             var target = this.eventListeners[name];
@@ -23,7 +23,7 @@ define(["util"],function(util) {
         }
         removeEventListener(name,cb){
           if(cb){
-            var uuid = cb.__uuid;
+            var uuid = cb[tag];
             this.eventListeners[name][uuid] = null;
           }else{
             this.eventListeners[name] = null;
