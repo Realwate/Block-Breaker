@@ -1,4 +1,4 @@
-define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget,util) {
+define(["base/GameItem","base/EventTarget","NativeEvent","util"],function(GameItem,EventTarget,NativeEvent,util) {
     'use strict';
 
     class Scene extends EventTarget{
@@ -8,18 +8,20 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
             this.actions = {};
             this.keydowns = {};
             this.elements = [];
+            this.nativeEvent = NativeEvent.getInstance();
             this.logger = util.getLogger();
-            window.addEventListener("keydown",(e)=>{
+            this.addNativeEventListener("keydown",(e)=>{
                 this.keydowns[e.key] = true;
             })
-            window.addEventListener("keyup",(e)=>{
+            this.addNativeEventListener("keyup",(e)=>{
                 this.keydowns[e.key] = false;
             })
         }
-        init(){
-          this.actions = {};
-          this.keydowns = {};
-          this.elements = [];
+        addNativeEventListener(type,cb){
+          this.nativeEvent.add(this,type,cb);
+        }
+        removeNativeEventListener(type){
+            this.nativeEvent.remove(this,type);
         }
         replaceScene(scene){
             this.context.game.replaceScene(scene);
@@ -31,7 +33,7 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
             this.elements.push(e);
         }
         draw(){
-          this.update();
+          this.triggerAction();
             this.context.canvasContext.clearRect(0,0,this.context.width,this.context.height)
             this.elements.forEach(e=>{
                 if(util.isArray(e)){
@@ -43,7 +45,7 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
                 }
             });
         }
-        update(){
+        triggerAction(){
              //遍历action 更改状态
              Object.keys(this.actions)
              .forEach((key)=>{
@@ -53,7 +55,7 @@ define(["base/GameItem","base/EventTarget","util"],function(GameItem,EventTarget
              })
         }
         destroy(){
-
+            this.nativeEvent.remove(this);
         }
     }
     return Scene;

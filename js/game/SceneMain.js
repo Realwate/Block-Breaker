@@ -14,6 +14,16 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
                 var end = new SceneEnd(this.context,args);
                 this.replaceScene(end);
             })
+            this.addNativeEventListener("click",({pageX,pageY})=>{
+              var canvas = this.context.canvas;
+              var offsetRect = canvas.getBoundingClientRect()
+              var offsetX = offsetRect.left + document.body.scrollLeft + canvas.clientLeft;
+              var offsetY = offsetRect.top + document.body.scrollTop + canvas.clientTop;
+              this.ball.changePosition({
+                x:pageX - offsetX,
+                y:pageY - offsetY,
+              })
+            })
 
             this.background = new Background(this.context);
             this.background.width = config.global.width;

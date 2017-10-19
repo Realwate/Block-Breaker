@@ -14,6 +14,7 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                 this.imageCache = {};
                 this.context = {
                     game:this,
+                    canvas:canvas,
                     width: canvas.width,
                     height: canvas.height,
                     canvasContext: canvas.getContext("2d"),
@@ -39,7 +40,7 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                 })
                 .then(draw)
             }
-           
+
             replaceScene(scene) {
                 this.scene.destroy();
                 this.scene = scene;

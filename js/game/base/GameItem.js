@@ -16,6 +16,10 @@ define(["base/EventTarget","util"],function(EventTarget,util) {
            this.width = this.image.width;
            this.height = this.image.height;
         }
+        changePosition({x,y}){
+          this.x = x;
+          this.y = y;
+        }
         getRect(item){
             return [
                 {x:item.x,y:item.y},
