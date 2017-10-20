@@ -1,5 +1,5 @@
-define(["base/GameItem", "base/EventTarget", "NativeEvent", "Logger", "util"],
-    function (GameItem, EventTarget, NativeEvent, Logger, util) {
+define(["base/Element", "base/EventTarget", "base/NativeEvent", "Logger", "util"],
+    function (Element, EventTarget, NativeEvent, Logger, util) {
         'use strict';
 
         class Scene extends EventTarget {
@@ -9,7 +9,6 @@ define(["base/GameItem", "base/EventTarget", "NativeEvent", "Logger", "util"],
                 this.actions = {};
                 this.keydowns = {};
                 this.elements = [];
-                this.nativeEvent = NativeEvent.getInstance();
                 this.logger = Logger.getInstance();
                 this.addNativeEventListener("keydown", (e) => {
                     this.keydowns[e.key] = true;
@@ -19,10 +18,10 @@ define(["base/GameItem", "base/EventTarget", "NativeEvent", "Logger", "util"],
                 })
             }
             addNativeEventListener(type, cb) {
-                this.nativeEvent.add(this, type, cb);
+                NativeEvent.add(this, type, cb);
             }
             removeNativeEventListener(type) {
-                this.nativeEvent.remove(this, type);
+                NativeEvent.remove(this, type);
             }
             replaceScene(scene) {
                 this.context.game.replaceScene(scene);
@@ -56,7 +55,7 @@ define(["base/GameItem", "base/EventTarget", "NativeEvent", "Logger", "util"],
                     })
             }
             destroy() {
-                this.nativeEvent.remove(this);
+                NativeEvent.remove(this);
             }
         }
         return Scene;

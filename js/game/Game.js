@@ -2,7 +2,7 @@
 /**
  * Game负责整个游戏的初始化，场景切换。
  */
-define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
+define(["entity/SceneStart", "entity/SceneMain", "entity/SceneEnd","util",'config'],
     function (SceneStart, SceneMain, SceneEnd,util,config) {
         'use strict';
 
@@ -40,7 +40,6 @@ define(["SceneStart", "SceneMain", "SceneEnd","util",'config'],
                 })
                 .then(draw)
             }
-
             replaceScene(scene) {
                 this.scene.destroy();
                 this.scene = scene;

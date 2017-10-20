@@ -5,19 +5,17 @@ define(["util"],function(util) {
         constructor(){
             this.eventListeners = {};
         }
-        registerEvent(name,callback){
-            if(this.eventListeners[name] == null){
-                this.eventListeners[name] = {};
-            }
-            callback[tag] = util.getUUID();
-            this.eventListeners[name][callback[tag]] = callback;
+        registerEvent(name,handler){
+            var handlers = this.eventListeners[name] || (this.eventListeners[name] = {})
+            handler[tag] = util.getUUID();
+            handlers[handler[tag]] = handler;
         }
         triggerEvent(name,args){
-            var target = this.eventListeners[name];
-            if(target != null){
-              Object.keys(target).forEach((key)=>{
-                var cb = target[key];
-                cb &&　cb.call(this,args);
+            var handlers = this.eventListeners[name];
+            if(handlers != null){
+              Object.values(handlers)
+              .forEach((handler)=>{
+                handler &&　handler.call(this,args);
               })
             }
         }

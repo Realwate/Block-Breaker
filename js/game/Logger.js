@@ -16,7 +16,6 @@ define(["config"], function (config) {
             if (config.env == "production") {
                 Logger.THRESHOLD = Logger.OFF;
             }
-
         }
         enableDebugMode() {
             return Logger.THRESHOLD == Logger.DEBUG;
@@ -42,7 +41,6 @@ define(["config"], function (config) {
             }
             this.handle(level, args);
         }
-
         static getInstance() {
             return instance;
         }
@@ -59,7 +57,7 @@ define(["config"], function (config) {
             ERROR: getStyleStr("red", "14px"),
         }
         function getPrefix({ name }) {
-            return [`%c ${getTime()}-[${name}]: `, styleMap[name]]
+            return [`%c${getTime()}-[${name}]: `.padEnd(20), styleMap[name]]
         }
         function getTime() {
             return new Date().toLocaleTimeString();
