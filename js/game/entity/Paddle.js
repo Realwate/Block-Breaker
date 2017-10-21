@@ -4,10 +4,12 @@ define(["base/Element"],function(Element) {
     class Paddle extends Element{
         constructor(context){
             super(context);
-            this.loadImage('paddle');
+            this.loadImage('paddles/3-1');
             this.setup();
         }
         setup(){
+            this.width = 120;
+            this.height = 40;
             this.x =   this.context.width / 2 - this.width / 2;
             this.y =  this.context.height - this.height;
             this.step = this.step * 2;

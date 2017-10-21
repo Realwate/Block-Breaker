@@ -1,4 +1,5 @@
-define(function () {
+define(["Logger"],function (Logger) {
+    var logger = Logger.getInstance();
     var util = {};
     var __toString = function(o){
         return Object.prototype.toString.call(o);
@@ -11,7 +12,10 @@ define(function () {
     })
 
     util.getImageFullPath = function(path){
-        path = /\./.test(path) ? path : path + ".jpg";
+        path = path.includes(".") ? path : path + ".png";
+        if(path.startsWith("/")){
+            path = path.slice(1)
+        }
          return `./assets/img/${path}`;
     }
     util.loadOneImage = function(fullName){
@@ -24,19 +28,25 @@ define(function () {
          }
         })
     }
+    var getImageNames = function(imageNames,obj,prefix){
+        if(util.isObject(obj)){
+            obj.names.forEach((name)=>{
+                getImageNames(imageNames,name,prefix + "/" + (name.prefix || ""));
+            });
+
+        }else{
+            var name = obj;
+            var fullName = `${prefix}${name}`
+            imageNames.push(fullName);
+        }
+    }
     util.loadImage = function(imageConfig){
         var imageNames = [];
-        imageConfig.map((obj)=>{
-            if(util.isObject(obj)){
-                obj.names.map((name)=>{
-                    var fullName = `${obj.prefix}/${name}`
-                    imageNames.push(fullName);
-                });
-
-            }else{
-                imageNames.push(obj);
-            }
-        })
+        getImageNames(imageNames,{
+            names:imageConfig
+        },"")
+       
+        logger.log("加载图片：",imageNames);
 
         return Promise.all(imageNames.map((fullName)=>{
             return util.loadOneImage(fullName);

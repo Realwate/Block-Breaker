@@ -8,7 +8,7 @@ define(["base/Element","util","config"],function(Element,util,config) {
         }
         static getImageNameByLevel(level){
             level = 1;
-            return `background/background${level}`
+            return `background/${level}`
         }
     }
 

@@ -11,13 +11,15 @@ define(["base/Element","util","config"],function(Element,util,config) {
             this.y = y;
             this.health = health;
             this.loadImage(Brick.getImageNameByHealth(this.health));
+            this.width = 50;
+            this.height = 18;
         }
         setPosition({x=0,y=0}){
           this.x = x;
           this.y = y;
         }
         static getImageNameByHealth(health){
-            return `bricks/brick${health}`
+            return `bricks/${health}`
         }
         
         isAlive(){

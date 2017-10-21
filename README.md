@@ -1,8 +1,8 @@
 ### 打砖块游戏
 
 #### TODO
-* 砖块配置
-* 得分
+* context管理 Context getContext.getImage/ Configuration 依靠配置来实例化 元素大小 配置 /
+* util管理
 * 背景
 * 动图
 * praticle system

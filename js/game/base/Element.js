@@ -11,6 +11,9 @@ define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, uti
             this.image = null;
         }
         loadImage(name) {
+            if(!name.startsWith("/")){
+                name = "/" + name;
+            }
             this.image = this.context.imageCache[name];
             this.width = this.image.width;
             this.height = this.image.height;

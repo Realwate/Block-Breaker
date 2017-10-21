@@ -6,7 +6,7 @@ define(["base/Element"], function(Element) {
             this.setup();
         }
         setup() {
-            this.loadImage('ball');
+            this.loadImage('balls/bird1/1');
             this.width = 24;
             this.height = 24;
             this.speedX = this.step;

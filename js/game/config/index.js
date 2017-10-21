@@ -6,12 +6,21 @@ define(function() {
         height: 320,
     };
 
-    var images = ["ball", "paddle", {
+    var images = [{
+        prefix: "balls",
+        names: [{
+            prefix:"bird1",
+            names:["1","2", "3", "4"]
+        }]
+    }, {
+        prefix: "paddles",
+        names: ["1-1", "1-2", "3-1", "3-2"]
+    }, {
         prefix: "bricks",
-        names: ["brick1", "brick2", "brick3", "brick4"]
+        names: ["1", "2", "3", "4"]
     }, {
         prefix: "background",
-        names: ["background1", ]
+        names: ["1", "2", "3", "4"]
     }];
 
     var bricks = [
