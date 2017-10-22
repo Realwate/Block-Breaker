@@ -1,47 +1,43 @@
-define(["base/Scene",'entity/Ball','entity/Paddle','entity/Brick','entity/SceneEnd',
-'entity/SceneOver','entity/Background','entity/Score','util','config'],
+define(["base/Scene",'entity/Ball','entity/Paddle','entity/Brick','scene/SceneEnd',
+'scene/SceneOver','entity/Background','entity/Score','util','config'],
 function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config) {
     'use strict';
 
     class SceneMain extends Scene{
-        constructor(context,initConfig={}){
-            super(context);
-            this.setup(initConfig);
+        constructor(){
+            super();
         }
-        setup({level=1,score=new Score(this.context)}) {
+        init({level=1,score=new Score(this)}) {
             this.level = level;
             this.maxLevel = config.bricks.length;
             this.registerEvent("gameend", (args) => {
-                var end = new SceneEnd(this.context,args);
+                var end = new SceneEnd(args);
                 this.replaceScene(end);
             })
             this.addNativeEventListener("click",({pageX,pageY})=>{
-              var canvas = this.context.canvas;
-              var offsetRect = canvas.getBoundingClientRect()
-              var offsetX = offsetRect.left + document.body.scrollLeft + canvas.clientLeft;
-              var offsetY = offsetRect.top + document.body.scrollTop + canvas.clientTop;
+              var offset = this.getContext().getOffset();
               this.ball.changePosition({
-                x:pageX - offsetX,
-                y:pageY - offsetY,
+                x:pageX - offset.x,
+                y:pageY - offset.y,
               })
             })
 
-            this.background = new Background(this.context);
+            this.background = new Background(this);
             this.background.width = config.global.width;
             this.background.height = config.global.height;
             this.addElement(this.background);
             this.score = score;
             this.addElement(this.score);
 
-            this.ball = new Ball(this.context);
+            this.ball = new Ball(this);
             this.ball.registerEvent("bottomOut", () => {
                this.triggerEvent("gameover");
             })
             this.addElement(this.ball);
-            this.paddle = new Paddle(this.context);
+            this.paddle = new Paddle(this);
             this.addElement(this.paddle);
 
-            this.bricks = this.loadBricks(this.context, this.level)
+            this.bricks = this.loadBricks(this.level)
 
             this.addElement(this.bricks);
             this.registerAction("a", () => {
@@ -60,7 +56,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
                this.triggerEvent("gameover")
             })
             this.registerEvent("gameover", () => {
-                var end = new SceneOver(this.context);
+                var end = new SceneOver();
                 this.replaceScene(end);
             })
         }
@@ -69,8 +65,8 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
                 this.triggerEvent("gameend",this.score.value)
                 return;
             }
-            var main = new SceneMain(this.context,{level:this.level,score:this.score});
-            this.replaceScene(main)
+            var main = new SceneMain();
+            this.replaceScene(main,{level:this.level,score:this.score})
           }
         collideDetect(){
             // 碰撞检测并分离
@@ -89,7 +85,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
               }
           });
         }
-        loadBricks(context, level) {
+        loadBricks(level) {
             var bricks = [];
             var bricksConfig = config.bricks[level - 1];
             var getPosition = util.getRandomPosition({ width: 300, height:180, startX: 50, startY: 50 });
@@ -98,7 +94,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
                 while (count-- > 0) {
                     var position = getPosition();
                     this.logger.log("生成位置:",position);
-                    bricks.push(new Brick(context, position))
+                    bricks.push(new Brick(this, position))
 
                 }
             } else {
@@ -106,14 +102,14 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
                 bricksConfig.settings.forEach(({ count, health }) => {
                     while (count-- > 0) {
                         var position = getPosition();
-                        bricks.push(new Brick(context, Object.assign({ health }, position)))
+                        bricks.push(new Brick(this, Object.assign({ health }, position)))
                     }
                 })
                 var resetCount = totalCount - bricks.length;
                 if(resetCount > 0){
                     while(resetCount-- > 0){
                         var position = getPosition();
-                        bricks.push(new Brick(context, position));
+                        bricks.push(new Brick(this, position));
                     }
                 }
             }

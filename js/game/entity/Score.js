@@ -1,8 +1,8 @@
 define(["base/Element", "util", "config"], function(Element, util, config) {
     'use strict';
     class Score extends Element {
-        constructor(context) {
-            super(context);
+        constructor(contextWrapper) {
+            super(contextWrapper);
             this.setup();
         }
         setup() {
@@ -15,7 +15,7 @@ define(["base/Element", "util", "config"], function(Element, util, config) {
             this.value -= value;
         }
         draw() {
-            this.context.canvasContext.fillText(`分数:${this.value}`, 5, 20);
+            this.context.fillText(`分数:${this.value}`, 5, 20);
         }
     }
     return Score;

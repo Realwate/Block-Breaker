@@ -3,9 +3,8 @@ define(["base/Element", "base/EventTarget", "base/NativeEvent", "Logger", "util"
         'use strict';
 
         class Scene extends EventTarget {
-            constructor(context) {
+            constructor() {
                 super();
-                this.context = context;
                 this.actions = {};
                 this.keydowns = {};
                 this.elements = [];
@@ -17,14 +16,20 @@ define(["base/Element", "base/EventTarget", "base/NativeEvent", "Logger", "util"
                     this.keydowns[e.key] = false;
                 })
             }
+            setContext(context){
+                this.appContext = context;
+            }
+            getContext(){
+                return this.appContext;
+            }
             addNativeEventListener(type, cb) {
                 NativeEvent.add(this, type, cb);
             }
             removeNativeEventListener(type) {
                 NativeEvent.remove(this, type);
             }
-            replaceScene(scene) {
-                this.context.game.replaceScene(scene);
+            replaceScene(scene,initConfig) {
+                this.getContext().replaceScene(scene,initConfig);
             }
             registerAction(name, callback) {
                 this.actions[name] = callback;
@@ -34,7 +39,7 @@ define(["base/Element", "base/EventTarget", "base/NativeEvent", "Logger", "util"
             }
             draw() {
                 this.triggerAction();
-                this.context.canvasContext.clearRect(0, 0, this.context.width, this.context.height)
+                this.getContext().clearRect(0, 0, this.getContext().width, this.getContext().height)
                 this.elements.forEach(e => {
                     if (util.isArray(e)) {
                         for (let o of e) {

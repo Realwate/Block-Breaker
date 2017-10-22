@@ -2,8 +2,8 @@
 /**
  * Game负责整个游戏的初始化，场景切换。
  */
-define(["entity/SceneStart", "entity/SceneMain", "entity/SceneEnd","util",'config'],
-    function (SceneStart, SceneMain, SceneEnd,util,config) {
+define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","util",'config'],
+    function (SceneStart, SceneMain, SceneEnd,AppContext,util,config) {
         'use strict';
 
         class Game {
@@ -11,20 +11,11 @@ define(["entity/SceneStart", "entity/SceneMain", "entity/SceneEnd","util",'confi
                 canvas.height = config.global.height;
                 canvas.width = config.global.width;
                 this.canvas = canvas;
-                this.imageCache = {};
-                this.context = {
-                    game:this,
-                    canvas:canvas,
-                    width: canvas.width,
-                    height: canvas.height,
-                    canvasContext: canvas.getContext("2d"),
-                    imageCache:this.imageCache,
-                };
-                this.context.canvasContext.font="18px yahei";
-                this.scene = new SceneStart(this.context);
+                this.context = new AppContext(this,canvas);
             }
             start() {
-                this.context.canvasContext.fillText("加载资源中...",50,100);
+                this.replaceScene(new SceneStart());
+                this.context.fillText("加载资源中...",50,100);
                 var draw = ()=>{
                     this.scene.draw();
                     window.requestAnimationFrame(draw);
@@ -35,14 +26,16 @@ define(["entity/SceneStart", "entity/SceneMain", "entity/SceneEnd","util",'confi
                 util.loadImage(images)
                 .then(imageInfos=>{
                     imageInfos.forEach((imageInfo)=>{
-                        this.imageCache[imageInfo.fullName] = imageInfo.image;
+                        this.context.addImage(imageInfo.fullName,imageInfo.image)
                     })
                 })
                 .then(draw)
             }
-            replaceScene(scene) {
-                this.scene.destroy();
+            replaceScene(scene,initConfig={}) {
+                this.scene && this.scene.destroy();
                 this.scene = scene;
+                this.scene.setContext(this.context);
+                this.scene.init(initConfig); //由Game调用init 统一控制Scene初始化过程
             }
         }
         return Game;

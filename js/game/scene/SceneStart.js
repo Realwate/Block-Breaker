@@ -1,22 +1,21 @@
-define(["base/Scene","entity/SceneMain"],
+define(["base/Scene","scene/SceneMain"],
 function(Scene,SceneMain) {
     'use strict';
 
     class SceneStart extends Scene{
-        constructor(context){
-            super(context);
-            this.setup()
+        constructor(){
+            super();
         }
-        setup(){
+        init(){
             this.registerAction("k", () => {
-                var main = new SceneMain(this.context);
+                var main = new SceneMain();
                 this.replaceScene(main);
             })
         }
         draw(){
             super.draw();
             //开始绘制
-           this.context.canvasContext.fillText("K键开始游戏..",100,100)
+           this.getContext().fillText("K键开始游戏..",100,100)
         }
     }
 

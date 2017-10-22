@@ -1,9 +1,9 @@
 define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, util) {
     'use strict';
     class Element extends EventTarget {
-        constructor(context) {
+        constructor(contextWrapper) {
             super();
-            this.context = context;
+            this.context = contextWrapper.getContext();
             this.step = 3;
             this.logger = Logger.getInstance();
             this.x = 0;
@@ -11,12 +11,13 @@ define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, uti
             this.image = null;
         }
         loadImage(name) {
-            if(!name.startsWith("/")){
-                name = "/" + name;
+            var image = this.context.getImage(name);
+            if(image == null){
+                this.logger.error("图片加载失败:",name)
             }
-            this.image = this.context.imageCache[name];
-            this.width = this.image.width;
-            this.height = this.image.height;
+            this.image = image;
+            this.width = image.width;
+            this.height = image.height;
         }
         changePosition({
             x,
@@ -63,14 +64,14 @@ define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, uti
             return a[0].x < b[3].x && a[3].x > b[0].x && a[0].y < b[3].y && a[3].y > b[0].y
         }
         draw() {
-            this.context.canvasContext.drawImage(this.image, this.x, this.y, this.width, this.height);
+            this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
         }
         flipHorizontalDraw() { // 水平翻转
-            this.context.canvasContext.save();
-            this.context.canvasContext.translate(this.x + this.width, 0)
-            this.context.canvasContext.scale(-1, 1);
-            this.context.canvasContext.drawImage(this.image, 0, this.y, this.width, this.height)
-            this.context.canvasContext.restore();
+            this.context.save();
+            this.context.translate(this.x + this.width, 0)
+            this.context.scale(-1, 1);
+            this.context.drawImage(this.image, 0, this.y, this.width, this.height)
+            this.context.restore();
         }
     }
     return Element;
