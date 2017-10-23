@@ -1,15 +1,14 @@
-define(["base/Element"],function(Element) {
+define(["base/Element","Configuration"],function(Element,config) {
     'use strict';
 
     class Paddle extends Element{
-        constructor(context){
+        constructor(context,paddleBuilder){
             super(context);
-            this.loadImage('paddles/3-1');
-            this.setup();
+            paddleBuilder = Object.assign({},config.getElementBuilder("paddle"),paddleBuilder);
+            this.setup(paddleBuilder);
         }
-        setup(){
-            this.width = 120;
-            this.height = 40;
+        setup(paddleBuilder){
+            super.setup(paddleBuilder);
             this.x =   this.context.width / 2 - this.width / 2;
             this.y =  this.context.height - this.height;
             this.step = this.step * 2;

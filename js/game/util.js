@@ -28,26 +28,9 @@ define(["Logger"],function (Logger) {
          }
         })
     }
-    var getImageNames = function(imageNames,obj,prefix){
-        if(util.isObject(obj)){
-            obj.names.forEach((name)=>{
-                getImageNames(imageNames,name,prefix + "/" + (name.prefix || ""));
-            });
 
-        }else{
-            var name = obj;
-            var fullName = `${prefix}${name}`
-            imageNames.push(fullName);
-        }
-    }
-    util.loadImage = function(imageConfig){
-        var imageNames = [];
-        getImageNames(imageNames,{
-            names:imageConfig
-        },"")
-       
+    util.loadImage = function(imageNames){
         logger.log("加载图片：",imageNames);
-
         return Promise.all(imageNames.map((fullName)=>{
             return util.loadOneImage(fullName);
         }));

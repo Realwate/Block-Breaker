@@ -1,4 +1,4 @@
-define(["config"], function (config) {
+define(["Configuration"], function (config) {
     'use strict';
 
     class AppContext {

@@ -1,14 +1,20 @@
-define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, util) {
+define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTarget, Logger, config,util) {
     'use strict';
     class Element extends EventTarget {
         constructor(contextWrapper) {
             super();
             this.context = contextWrapper.getContext();
-            this.step = 3;
             this.logger = Logger.getInstance();
-            this.x = 0;
-            this.y = 0;
             this.image = null;
+            var baseBuilder = config.getElementBuilder("base");
+            this.step = baseBuilder.step;
+        }
+        setup({x=0,y=0,width,height,defaultImage}){
+          width && (this.width = width)
+          height && (this.height = height)
+          defaultImage && this.loadImage(defaultImage);
+          this.x = x;
+          this.y = y;
         }
         loadImage(name) {
             var image = this.context.getImage(name);
@@ -16,8 +22,8 @@ define(["base/EventTarget", "Logger", "util"], function(EventTarget, Logger, uti
                 this.logger.error("图片加载失败:",name)
             }
             this.image = image;
-            this.width = image.width;
-            this.height = image.height;
+            this.width || (this.width = image.width);
+            this.height || (this.height = image.height);
         }
         changePosition({
             x,

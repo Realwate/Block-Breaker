@@ -1,18 +1,16 @@
-define(["base/Element","util","config"],function(Element,util,config) {
+define(["base/Element","util","Configuration"],function(Element,util,config) {
     'use strict';
 
     class Brick extends Element{
-        constructor(context,initConfig={}) {
+        constructor(context,brickBuilder={}) {
             super(context);
-            this.setup(initConfig);
+            brickBuilder = Object.assign({},config.getElementBuilder("brick"),brickBuilder);
+            this.setup(brickBuilder);
         }
-        setup({x=0,y=0,health=1}){
-            this.x = x;
-            this.y = y;
-            this.health = health;
+        setup(brickBuilder){
+            super.setup(brickBuilder);
+            this.health = brickBuilder.health || 1;
             this.loadImage(Brick.getImageNameByHealth(this.health));
-            this.width = 50;
-            this.height = 18;
         }
         setPosition({x=0,y=0}){
           this.x = x;
@@ -21,7 +19,7 @@ define(["base/Element","util","config"],function(Element,util,config) {
         static getImageNameByHealth(health){
             return `bricks/${health}`
         }
-        
+
         isAlive(){
             return this.health > 0;
         }

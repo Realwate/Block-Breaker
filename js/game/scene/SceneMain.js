@@ -1,5 +1,5 @@
 define(["base/Scene",'entity/Ball','entity/Paddle','entity/Brick','scene/SceneEnd',
-'scene/SceneOver','entity/Background','entity/Score','util','config'],
+'scene/SceneOver','entity/Background','entity/Score','util','Configuration'],
 function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config) {
     'use strict';
 
@@ -9,10 +9,10 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
         }
         init({level=1,score=new Score(this)}) {
             this.level = level;
-            this.maxLevel = config.bricks.length;
-            this.registerEvent("gameend", (args) => {
-                var end = new SceneEnd(args);
-                this.replaceScene(end);
+            this.maxLevel = config.getGlobal().maxLevel;
+            this.registerEvent("gameend", () => {
+                var end = new SceneEnd();
+                this.replaceScene(end,{score:this.score.value});
             })
             this.addNativeEventListener("click",({pageX,pageY})=>{
               var offset = this.getContext().getOffset();
@@ -23,8 +23,6 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
             })
 
             this.background = new Background(this);
-            this.background.width = config.global.width;
-            this.background.height = config.global.height;
             this.addElement(this.background);
             this.score = score;
             this.addElement(this.score);
@@ -87,8 +85,9 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
         }
         loadBricks(level) {
             var bricks = [];
-            var bricksConfig = config.bricks[level - 1];
-            var getPosition = util.getRandomPosition({ width: 300, height:180, startX: 50, startY: 50 });
+            var bricksConfig = config.getBricks(level - 1);
+            var area = config.getGlobal()["bricksArea"];
+            var getPosition = util.getRandomPosition(area);
             if (util.isNumber(bricksConfig)) {
                 var count = bricksConfig;
                 while (count-- > 0) {

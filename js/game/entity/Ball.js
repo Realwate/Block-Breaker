@@ -1,14 +1,13 @@
-define(["base/Element"], function(Element) {
+define(["base/Element","Configuration"], function(Element,config) {
     'use strict';
     class Ball extends Element {
-        constructor(context) {
+        constructor(context,ballBuilder) {
             super(context);
-            this.setup();
+            ballBuilder = Object.assign({},config.getElementBuilder("Ball"),ballBuilder);
+            this.setup(ballBuilder);
         }
-        setup() {
-            this.loadImage('balls/bird1/1');
-            this.width = 24;
-            this.height = 24;
+        setup(ballBuilder) {
+            super.setup(ballBuilder);
             this.speedX = this.step;
             this.speedY = this.step;
         }
