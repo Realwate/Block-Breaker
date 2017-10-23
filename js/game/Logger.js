@@ -34,6 +34,7 @@ define(["config"], function (config) {
         }
         error(...args) {
             this.invoke(Logger.ERROR, args);
+            throw new Error(args[0])
         }
         invoke(level, args) {
             if (level.value < Logger.THRESHOLD.value) {

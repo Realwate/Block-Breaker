@@ -9,7 +9,7 @@ function(Scene,Score) {
         init({score=0}){
             this.scoreValue = score;
             this.registerAction("r", () => {
-                require(["SceneMain"],(SceneMain)=>{
+                require(["scene/SceneMain"],(SceneMain)=>{
                     var main = new SceneMain();
                     this.replaceScene(main);
                 });

@@ -2,14 +2,14 @@ define(function() {
     'use strict';
     var env = "dev";
     var global = {
-        width: 460,
-        height: 320,
-        maxLevel:2,
-        bricksArea:{ width: 300, height:180, startX: 50, startY: 50 }
+        width: 480,
+        height: 330,
+        maxLevel:3,
+        bricksArea:{ width: 300, height:170, startX: 50, startY: 50 }
     }
     var elements = {
       base:{
-        step:3
+        step:2.8
       },
       background:{
         width:global.width,
@@ -27,8 +27,8 @@ define(function() {
       },
       paddle:{
         defaultImage:"paddles/3-1",
-        width:120,
-        height:40
+        width:130,
+        height:25
       }
     }
     var images = [{

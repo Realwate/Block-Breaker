@@ -16,6 +16,9 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
           this.x = x;
           this.y = y;
         }
+        getConfig(){
+            return this.context.configuration;
+        }
         loadImage(name) {
             var image = this.context.getImage(name);
             if(image == null){
@@ -24,6 +27,7 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
             this.image = image;
             this.width || (this.width = image.width);
             this.height || (this.height = image.height);
+            this.defaultImage || (this.defaultImage = image);
         }
         changePosition({
             x,

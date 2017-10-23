@@ -1,10 +1,10 @@
-define(["base/Element","Configuration"],function(Element,config) {
+define(["base/Element"],function(Element) {
     'use strict';
 
     class Paddle extends Element{
         constructor(context,paddleBuilder){
             super(context);
-            paddleBuilder = Object.assign({},config.getElementBuilder("paddle"),paddleBuilder);
+            paddleBuilder = Object.assign({},this.getConfig().getElementBuilder("paddle"),paddleBuilder);
             this.setup(paddleBuilder);
         }
         setup(paddleBuilder){
@@ -12,6 +12,20 @@ define(["base/Element","Configuration"],function(Element,config) {
             this.x =   this.context.width / 2 - this.width / 2;
             this.y =  this.context.height - this.height;
             this.step = this.step * 2;
+            this.currentState = Paddle.STATE.NORMAL;
+        }
+        changeState(){
+            // TODO 配置自动化
+            this.currentState = Paddle.STATE.COLLISION;
+            this.loadImage("paddles/1-1");
+
+            if( this.currentState == Paddle.STATE.COLLISION){
+                setTimeout(()=>{
+                    this.currentState = Paddle.NORMAL;
+                    this.image = this.defaultImage;
+                },200)
+              
+            }
         }
         moveLeft(){
             if(this.x < this.step){
@@ -41,6 +55,10 @@ define(["base/Element","Configuration"],function(Element,config) {
           }
             this.y += this.step;
         }
+    }
+    Paddle.STATE = {
+        NORMAL:1,
+        COLLISION:2,
     }
 
     return Paddle;

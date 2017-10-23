@@ -1,4 +1,4 @@
-define(["base/Element", "util", "Configuration"], function(Element, util, config) {
+define(["base/Element", "util"], function(Element, util) {
     'use strict';
     class Score extends Element {
         constructor(contextWrapper) {

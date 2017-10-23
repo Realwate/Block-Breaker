@@ -1,9 +1,9 @@
-define(["base/Element","Configuration"], function(Element,config) {
+define(["base/Element","util"], function(Element,util) {
     'use strict';
     class Ball extends Element {
         constructor(context,ballBuilder) {
             super(context);
-            ballBuilder = Object.assign({},config.getElementBuilder("Ball"),ballBuilder);
+            ballBuilder = Object.assign({},this.getConfig().getElementBuilder("Ball"),ballBuilder);
             this.setup(ballBuilder);
         }
         setup(ballBuilder) {
@@ -23,6 +23,13 @@ define(["base/Element","Configuration"], function(Element,config) {
             }
             this.x += this.speedX
             this.y += this.speedY
+        }
+        speedUp(ratio){
+            ratio = ratio - 1;
+            ratio *= 0.1;
+            this.speedX += ratio * this.step;
+            this.speedY += ratio * this.step;
+            this.logger.log("当前速度：",this.speedX)
         }
         separateFrom(element) {
             var intersectRect = this.getIntersect(element);
@@ -54,18 +61,10 @@ define(["base/Element","Configuration"], function(Element,config) {
             return this.speedY / Math.abs(this.speedY);
         }
         normalizeXY() {
-            this.x = this.normalizeNum(this.x, 0, this.context.width - this.width);
-            this.y = this.normalizeNum(this.y, 0, this.context.height - this.height);
+            this.x = util.normalizeNum(this.x, 0, this.context.width - this.width);
+            this.y = util.normalizeNum(this.y, 0, this.context.height - this.height);
         }
-        normalizeNum(x, min, max) {
-            if (x < min) {
-                return min;
-            }
-            if (x > max) {
-                return max;
-            }
-            return x;
-        }
+    
         draw() {
             //反转图像
             if (this.speedX < 0) {

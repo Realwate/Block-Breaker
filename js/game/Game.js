@@ -3,18 +3,18 @@
  * Game负责整个游戏的初始化，场景切换。
  */
 define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","util",'Configuration'],
-    function (SceneStart, SceneMain, SceneEnd,AppContext,util,config) {
+    function (SceneStart, SceneMain, SceneEnd,AppContext,util,configuration) {
         'use strict';
 
         class Game {
             constructor(canvas) {
               this.canvas = canvas;
-              this.init(config.getGlobal())
+              this.setup(configuration.getGlobal())
+              this.context = new AppContext(this,this.canvas,configuration);
             }
-            init({width,height}){
+            setup({width,height}){
               this.canvas.height = height;
               this.canvas.width = width;
-              this.context = new AppContext(this,this.canvas);
             }
             start() {
                 this.replaceScene(new SceneStart());
@@ -25,7 +25,7 @@ define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","ut
                     // setTimeout(draw,1000/20)
                 }
                 //预加载图片
-                util.loadImage(config.getImages())
+                util.loadImage(this.context.configuration.getImages())
                 .then(imageInfos=>{
                     imageInfos.forEach((imageInfo)=>{
                         this.context.addImage(imageInfo.fullName,imageInfo.image)

@@ -1,10 +1,10 @@
 ### 打砖块游戏
 
 #### TODO
-* context管理 Context getContext.getImage/ Configuration 依靠配置来实例化 元素大小 配置 /
-* util管理
-* 背景
-* 动图
+* 各种状态切换
+* 背景 / 动图 / 关卡标志 / 等待时间
 * praticle system
-* debug + log
 * 配置/数据 管理
+
+#### 重构方面
+* util管理

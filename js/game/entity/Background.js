@@ -1,18 +1,19 @@
-define(["base/Element","util","Configuration"],function(Element,util,config) {
+define(["base/Element","util"],function(Element,util) {
     'use strict';
 
     class Background extends Element{
         constructor(context,backgroundBuilder) {
             super(context);
-            backgroundBuilder = Object.assign({},config.getElementBuilder("background"),backgroundBuilder);
+            backgroundBuilder = Object.assign({},this.getConfig().getElementBuilder("background"),backgroundBuilder);
             this.setup(backgroundBuilder);
         }
         setup(backgroundBuilder){
-            this.loadImage(Background.getImageNameByLevel(backgroundBuilder.level));
+            this.level = backgroundBuilder.level;
+            this.loadImage(this.getImageName());
             super.setup(backgroundBuilder);
         }
-        static getImageNameByLevel(level=1){
-            return `background/${level}`
+        getImageName(){
+            return `background/${this.level}`
         }
     }
 

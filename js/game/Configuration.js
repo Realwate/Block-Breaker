@@ -26,13 +26,12 @@ define(["config","util"], function (globalConfig,util) {
                     var fullName = `${prefix}${name}`
                     imageNames.push(fullName);
                 }
+                return imageNames;
             }
-
-            var imageNames = [];
-            getImageNames(imageNames,{
+            
+            this.cache["imageNames"] = getImageNames([],{
                 names:imageConfig
-            },"");
-            this.cache["imageNames"] = imageNames;
+            },"");;
           }
 
           return this.cache["imageNames"];

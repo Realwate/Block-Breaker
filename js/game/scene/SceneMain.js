@@ -1,6 +1,6 @@
 define(["base/Scene",'entity/Ball','entity/Paddle','entity/Brick','scene/SceneEnd',
-'scene/SceneOver','entity/Background','entity/Score','util','Configuration'],
-function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config) {
+'scene/SceneOver','entity/Background','entity/Score','util',],
+function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util) {
     'use strict';
 
     class SceneMain extends Scene{
@@ -9,10 +9,9 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
         }
         init({level=1,score=new Score(this)}) {
             this.level = level;
-            this.maxLevel = config.getGlobal().maxLevel;
-            this.registerEvent("gameend", () => {
-                var end = new SceneEnd();
-                this.replaceScene(end,{score:this.score.value});
+            this.maxLevel = this.getConfig().getGlobal().maxLevel;
+            this.registerEvent("gameend", (...args) => {
+                this.replaceScene(new SceneEnd(),...args);
             })
             this.addNativeEventListener("click",({pageX,pageY})=>{
               var offset = this.getContext().getOffset();
@@ -22,7 +21,7 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
               })
             })
 
-            this.background = new Background(this);
+            this.background = new Background(this,{level:this.level});
             this.addElement(this.background);
             this.score = score;
             this.addElement(this.score);
@@ -31,45 +30,45 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
             this.ball.registerEvent("bottomOut", () => {
                this.triggerEvent("gameover");
             })
+            this.ball.speedUp(this.level);
             this.addElement(this.ball);
+
             this.paddle = new Paddle(this);
             this.addElement(this.paddle);
 
-            this.bricks = this.loadBricks(this.level)
-
+            this.bricks = this.loadBricks()
             this.addElement(this.bricks);
-            this.registerAction("a", () => {
+            this.registerAction("ArrowLeft", () => {
                 this.paddle.moveLeft();
             })
-            this.registerAction("d", () => {
+            this.registerAction("ArrowRight", () => {
                 this.paddle.moveRight();
             })
-            this.registerAction("w", () => {
+            this.registerAction("ArrowUp", () => {
                 this.paddle.moveTop();
             })
-            this.registerAction("s", () => {
+            this.registerAction("ArrowDown", () => {
                 this.paddle.moveBottom();
             })
             this.registerAction("r", () => {
                this.triggerEvent("gameover")
             })
             this.registerEvent("gameover", () => {
-                var end = new SceneOver();
-                this.replaceScene(end);
+                this.replaceScene(new SceneOver());
             })
         }
         toNextLevel(){
             if(++this.level > this.maxLevel){
-                this.triggerEvent("gameend",this.score.value)
+                this.triggerEvent("gameend",{score:this.score.value})
                 return;
             }
-            var main = new SceneMain();
-            this.replaceScene(main,{level:this.level,score:this.score})
+            this.replaceScene(new SceneMain(),{level:this.level,score:this.score})
           }
         collideDetect(){
             // 碰撞检测并分离
           if(this.ball.collide(this.paddle)){
               this.ball.separateFrom(this.paddle)
+              this.paddle.changeState();
           }
           this.bricks.some((brick,i)=>{
               if(brick.collide(this.ball)){
@@ -83,34 +82,33 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util,config
               }
           });
         }
-        loadBricks(level) {
+        loadBricks() {
+            var bricksConfig = this.getConfig().getBricks(this.level - 1);
+            var area = this.getConfig().getGlobal()["bricksArea"];
+            var getPosition = util.getRandomPosFactory(area);
             var bricks = [];
-            var bricksConfig = config.getBricks(level - 1);
-            var area = config.getGlobal()["bricksArea"];
-            var getPosition = util.getRandomPosition(area);
             if (util.isNumber(bricksConfig)) {
                 var count = bricksConfig;
-                while (count-- > 0) {
-                    var position = getPosition();
-                    this.logger.log("生成位置:",position);
-                    bricks.push(new Brick(this, position))
-
-                }
+                bricks = this.loadBricksByCount(count,getPosition);
             } else {
                 var totalCount = bricksConfig.totalCount || 0;
                 bricksConfig.settings.forEach(({ count, health }) => {
-                    while (count-- > 0) {
-                        var position = getPosition();
-                        bricks.push(new Brick(this, Object.assign({ health }, position)))
-                    }
+                    bricks = bricks.concat(this.loadBricksByCount(count,getPosition,{health}));
                 })
                 var resetCount = totalCount - bricks.length;
-                if(resetCount > 0){
-                    while(resetCount-- > 0){
-                        var position = getPosition();
-                        bricks.push(new Brick(this, position));
-                    }
-                }
+                bricks = bricks.concat(this.loadBricksByCount(resetCount,getPosition));
+            }
+            this.logger.log("生成砖块",bricks)
+            return bricks;
+        }
+        loadBricksByCount(count,getPos,extraData){
+            var bricks = [];
+            if(count <= 0){
+                return [];
+            }
+            while(count-- > 0){
+                var pos = getPos();
+                bricks.push(new Brick(this, Object.assign(pos,extraData)));
             }
             return bricks;
         }

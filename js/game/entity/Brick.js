@@ -1,10 +1,10 @@
-define(["base/Element","util","Configuration"],function(Element,util,config) {
+define(["base/Element","util"],function(Element,util) {
     'use strict';
 
     class Brick extends Element{
         constructor(context,brickBuilder={}) {
             super(context);
-            brickBuilder = Object.assign({},config.getElementBuilder("brick"),brickBuilder);
+            brickBuilder = Object.assign({},this.getConfig().getElementBuilder("brick"),brickBuilder);
             this.setup(brickBuilder);
         }
         setup(brickBuilder){
