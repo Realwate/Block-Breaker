@@ -4,12 +4,14 @@ define(function() {
     var global = {
         width: 480,
         height: 330,
+        fps:50,
         maxLevel:3,
         bricksArea:{ width: 300, height:170, startX: 50, startY: 50 }
     }
     var elements = {
       base:{
-        step:2.8
+        step:2.8,
+        frame:20
       },
       background:{
         width:global.width,
@@ -17,9 +19,12 @@ define(function() {
         level:1
       },
       ball:{
-        defaultImage:"balls/bird1/1",
-        width:24,
-        height:24
+        defaultImage:[{name:"balls/bird1/1",frame:80},
+        {name:"balls/bird1/3",frame:2},
+        {name:"balls/bird1/5",frame:6},
+        {name:"balls/bird1/3",frame:2}],
+        width:27,
+        height:27
       },
       brick:{
         width:50,
@@ -35,7 +40,7 @@ define(function() {
         prefix: "balls",
         names: [{
             prefix:"bird1",
-            names:["1","2", "3", "4"]
+            names:["1","2", "3", "4","5"]
         }]
     }, {
         prefix: "paddles",

@@ -22,7 +22,7 @@ define(["base/Element"],function(Element) {
             if( this.currentState == Paddle.STATE.COLLISION){
                 setTimeout(()=>{
                     this.currentState = Paddle.NORMAL;
-                    this.image = this.defaultImage;
+                    this.loadImage();
                 },200)
               
             }

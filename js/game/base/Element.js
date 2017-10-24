@@ -8,6 +8,7 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
             this.image = null;
             var baseBuilder = config.getElementBuilder("base");
             this.step = baseBuilder.step;
+            this.baseFrame = baseBuilder.frame;
         }
         setup({x=0,y=0,width,height,defaultImage}){
           width && (this.width = width)
@@ -19,7 +20,7 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
         getConfig(){
             return this.context.configuration;
         }
-        loadImage(name) {
+        loadOneImage(name){
             var image = this.context.getImage(name);
             if(image == null){
                 this.logger.error("图片加载失败:",name)
@@ -27,7 +28,42 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
             this.image = image;
             this.width || (this.width = image.width);
             this.height || (this.height = image.height);
-            this.defaultImage || (this.defaultImage = image);
+        }
+        loadImage(name = this.defaultImageName ) {
+            if(!name){
+                this.logger.error("图片名称有误",name)
+            }
+            this.defaultImageName || (this.defaultImageName = name);
+
+            this.imageNames = null;
+            if(util.isArray(name)){ //多张切换
+                this.imageNames = name;
+                this.curImage = 0
+
+                if(util.isObject(name = name[0])){
+                    this.curFrame = name.frame || this.baseFrame;
+                    name = name.name
+                }
+                
+            }
+            this.loadOneImage(name)
+        }
+        changeImageInFrame(name,frame){
+        }
+        changeImage(){
+            if(util.isArray(this.imageNames)){
+                if(this.curFrame--){
+                    
+                }else{
+                    this.curImage = (this.curImage + 1) % this.imageNames.length;
+                    var name = this.imageNames[this.curImage];
+                    this.curFrame = name.frame || this.baseFrame;
+                    if(util.isObject(name)){
+                        name = name.name
+                    }
+                    this.loadOneImage(name);
+                }
+            }
         }
         changePosition({
             x,
@@ -73,15 +109,24 @@ define(["base/EventTarget", "Logger", "Configuration", "util"], function(EventTa
             var b = this.getRect(item)
             return a[0].x < b[3].x && a[3].x > b[0].x && a[0].y < b[3].y && a[3].y > b[0].y
         }
-        draw() {
+        draw(options) {
+            this.changeImage();
+
+            this.context.save();
+            if(options && options.flip){
+                this.flipHorizontalDraw();
+            }else{
+                this.simpleDraw();
+            }
+            this.context.restore();
+        }
+        simpleDraw(){
             this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
         }
         flipHorizontalDraw() { // 水平翻转
-            this.context.save();
             this.context.translate(this.x + this.width, 0)
             this.context.scale(-1, 1);
             this.context.drawImage(this.image, 0, this.y, this.width, this.height)
-            this.context.restore();
         }
     }
     return Element;

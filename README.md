@@ -1,10 +1,8 @@
 ### 打砖块游戏
 
 #### TODO
-* 各种状态切换
-* 背景 / 动图 / 关卡标志 / 等待时间
-* praticle system
-* 配置/数据 管理
-
-#### 重构方面
-* util管理
+* 集中定时任务 afterFrame / delay 
+* element的状态 对应configuration
+* 关卡标志 / 等待时间
+* praticle system - 撞击爆炸新效果
+* defaultConfig / 重构默认值

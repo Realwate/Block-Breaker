@@ -12,17 +12,18 @@ define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","ut
               this.setup(configuration.getGlobal())
               this.context = new AppContext(this,this.canvas,configuration);
             }
-            setup({width,height}){
+            setup({width,height,fps}){
               this.canvas.height = height;
               this.canvas.width = width;
+              this.fps = fps;
             }
             start() {
                 this.replaceScene(new SceneStart());
                 this.context.fillText("加载资源中...",50,100);
                 var draw = ()=>{
                     this.scene.draw();
-                    window.requestAnimationFrame(draw);
-                    // setTimeout(draw,1000/20)
+                    // window.requestAnimationFrame(draw);
+                    setTimeout(draw,1000/this.fps)
                 }
                 //预加载图片
                 util.loadImage(this.context.configuration.getImages())
