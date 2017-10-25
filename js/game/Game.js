@@ -10,21 +10,19 @@ define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","ut
             constructor(canvas) {
               this.canvas = canvas;
               this.setup(configuration.getGlobal())
-              this.context = new AppContext(this,this.canvas,configuration);
             }
             setup({width,height,fps}){
               this.canvas.height = height;
               this.canvas.width = width;
               this.fps = fps;
+
+              this.context = new AppContext(this,this.canvas,configuration);
+              this.timer = null;
+              this.draw = this.draw.bind(this);
             }
             start() {
                 this.replaceScene(new SceneStart());
                 this.context.fillText("加载资源中...",50,100);
-                var draw = ()=>{
-                    this.scene.draw();
-                    // window.requestAnimationFrame(draw);
-                    setTimeout(draw,1000/this.fps)
-                }
                 //预加载图片
                 util.loadImage(this.context.configuration.getImages())
                 .then(imageInfos=>{
@@ -32,9 +30,23 @@ define(["scene/SceneStart", "scene/SceneMain", "scene/SceneEnd","AppContext","ut
                         this.context.addImage(imageInfo.fullName,imageInfo.image)
                     })
                 })
-                .then(draw)
+                .then(this.draw)
+            }
+            draw(){
+                this.scene.draw();
+                // window.requestAnimationFrame(draw);
+                this.timer = setTimeout(this.draw,1000/this.fps)
+            }
+            pause(){ 
+                clearTimeout(this.timer);
             }
             replaceScene(scene,sceneBuilder={}) {
+                scene.registerEvent("pause",()=>{
+                    this.pause();
+                })
+                scene.registerEvent("continue",()=>{
+                    this.draw();
+                })
                 this.scene && this.scene.destroy();
                 this.scene = scene;
                 this.scene.setContext(this.context);

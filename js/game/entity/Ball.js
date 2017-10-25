@@ -66,7 +66,6 @@ define(["base/Element","util"], function(Element,util) {
         }
     
         draw() {
-            this.logger.debug("当前图片",this.imageNames,this.curImage)
             //反转图像
             if (this.speedX < 0) {
                 super.draw({flip:true});

@@ -1,6 +1,6 @@
 define(["base/Scene",'entity/Ball','entity/Paddle','entity/Brick','scene/SceneEnd',
-'scene/SceneOver','entity/Background','entity/Score','util',],
-function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util) {
+'scene/SceneOver','entity/Background','entity/Score','entity/LevelElement','util',],
+function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,LevelElement,util) {
     'use strict';
 
     class SceneMain extends Scene{
@@ -13,16 +13,22 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util) {
             this.registerEvent("gameend", (...args) => {
                 this.replaceScene(new SceneEnd(),...args);
             })
-            this.addNativeEventListener("click",({pageX,pageY})=>{
+            this.addNativeEventListener("click",({target,pageX,pageY})=>{
+                if(target != this.getContext().canvas){
+                    return;
+                }
               var offset = this.getContext().getOffset();
               this.ball.changePosition({
                 x:pageX - offset.x,
                 y:pageY - offset.y,
               })
             })
+            this.isLoading = true;
 
             this.background = new Background(this,{level:this.level});
             this.addElement(this.background);
+            this.levelElment = new LevelElement(this,{level:this.level});
+            this.addElement(this.levelElment);
             this.score = score;
             this.addElement(this.score);
 
@@ -38,6 +44,13 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util) {
 
             this.bricks = this.loadBricks()
             this.addElement(this.bricks);
+            this.addNativeEventListener("keyup", (e) => {
+                if(e.key !== "p"){
+                    return;
+                }
+                this.paused ?  this.triggerEvent("continue") :  this.triggerEvent("pause") 
+                this.paused = !this.paused;
+            })
             this.registerAction("ArrowLeft", () => {
                 this.paddle.moveLeft();
             })
@@ -62,13 +75,13 @@ function(Scene,Ball,Paddle,Brick,SceneEnd,SceneOver,Background,Score,util) {
                 this.triggerEvent("gameend",{score:this.score.value})
                 return;
             }
-            this.replaceScene(new SceneMain(),{level:this.level,score:this.score})
+            this.replaceScene(new SceneMain(),{level:this.level,score:this.score},{showLoading:true})
           }
         collideDetect(){
             // 碰撞检测并分离
           if(this.ball.collide(this.paddle)){
               this.ball.separateFrom(this.paddle)
-              this.paddle.changeState();
+              this.paddle.changeToCollide();
           }
           this.bricks.some((brick,i)=>{
               if(brick.collide(this.ball)){

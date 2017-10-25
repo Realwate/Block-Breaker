@@ -5,13 +5,17 @@ define(function() {
         width: 480,
         height: 330,
         fps:50,
-        maxLevel:3,
+        maxLevel:4,
         bricksArea:{ width: 300, height:170, startX: 50, startY: 50 }
     }
     var elements = {
       base:{
         step:2.8,
-        frame:20
+      },
+      level:{
+        width:80,
+        height:120,
+        level:1
       },
       background:{
         width:global.width,
@@ -19,7 +23,8 @@ define(function() {
         level:1
       },
       ball:{
-        defaultImage:[{name:"balls/bird1/1",frame:80},
+        defaultImage:[   {name:"balls/bird1/2",frame:5},{name:"balls/bird1/1",frame:90},
+        {name:"balls/bird1/2",frame:5},
         {name:"balls/bird1/3",frame:2},
         {name:"balls/bird1/5",frame:6},
         {name:"balls/bird1/3",frame:2}],
@@ -27,11 +32,11 @@ define(function() {
         height:27
       },
       brick:{
-        width:50,
-        height:18
+        width:52,
+        height:20
       },
       paddle:{
-        defaultImage:"paddles/3-1",
+        defaultImage:[{name:"paddles/3-1",frame:40}],
         width:130,
         height:25
       }
@@ -40,6 +45,9 @@ define(function() {
         prefix: "balls",
         names: [{
             prefix:"bird1",
+            names:["1","2", "3", "4","5"]
+        },{
+            prefix:"bird2",
             names:["1","2", "3", "4","5"]
         }]
     }, {
@@ -51,17 +59,20 @@ define(function() {
     }, {
         prefix: "background",
         names: ["1", "2", "3", "4"]
+    },{
+        prefix: "levels",
+        names: ["1", "2", "3", "4", "5"]
     }];
 
     var bricks = [
-      5, {
-          totalCount: 8,
+      4, {
+          totalCount: 6,
           settings: [{
               health: 2,
               count: 3
           }]
       }, {
-          totalCount: 12,
+          totalCount: 9,
           settings: [{
               health: 2,
               count: 4
@@ -69,7 +80,16 @@ define(function() {
               health: 3,
               count: 2
           }]
-      }
+      }, {
+        totalCount: 12,
+        settings: [{
+            health: 2,
+            count: 6
+        }, {
+            health: 3,
+            count: 3
+        }]
+    }
   ];
     return {
         env,

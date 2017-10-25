@@ -31,8 +31,8 @@ define(["base/Element", "base/EventTarget", "base/NativeEvent", "Logger", "util"
             removeNativeEventListener(type) {
                 NativeEvent.remove(this, type);
             }
-            replaceScene(scene,sceneBuilder) {
-                this.getContext().replaceScene(scene,sceneBuilder);
+            replaceScene(scene,sceneBuilder,options) {
+                this.getContext().replaceScene(scene,sceneBuilder,options);
             }
             registerAction(name, callback) {
                 this.actions[name] = callback;

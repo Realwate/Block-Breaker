@@ -21,8 +21,8 @@ define(function () {
         addImage(name, img) {
             this.imageCache[name] = img;
         }
-        replaceScene(scene, initConfig) {
-            this.game.replaceScene(scene, initConfig);
+        replaceScene(...args) {
+            this.game.replaceScene(...args);
         }
         getOffset() {
             var offsetRect = this.canvas.getBoundingClientRect()

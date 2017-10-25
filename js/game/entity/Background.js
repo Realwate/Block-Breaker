@@ -12,6 +12,9 @@ define(["base/Element","util"],function(Element,util) {
             this.loadImage(this.getImageName());
             super.setup(backgroundBuilder);
         }
+        draw(){
+            super.draw();
+        }
         getImageName(){
             return `background/${this.level}`
         }

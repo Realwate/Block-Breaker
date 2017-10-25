@@ -12,20 +12,12 @@ define(["base/Element"],function(Element) {
             this.x =   this.context.width / 2 - this.width / 2;
             this.y =  this.context.height - this.height;
             this.step = this.step * 2;
-            this.currentState = Paddle.STATE.NORMAL;
         }
-        changeState(){
-            // TODO 配置自动化
-            this.currentState = Paddle.STATE.COLLISION;
+        changeToCollide(){
             this.loadImage("paddles/1-1");
-
-            if( this.currentState == Paddle.STATE.COLLISION){
-                setTimeout(()=>{
-                    this.currentState = Paddle.NORMAL;
-                    this.loadImage();
-                },200)
-              
-            }
+            this.doTaskAfterSeconds(()=>{
+                this.loadImage(this.defaultImageName);
+            },0.2)
         }
         moveLeft(){
             if(this.x < this.step){
@@ -55,10 +47,6 @@ define(["base/Element"],function(Element) {
           }
             this.y += this.step;
         }
-    }
-    Paddle.STATE = {
-        NORMAL:1,
-        COLLISION:2,
     }
 
     return Paddle;
